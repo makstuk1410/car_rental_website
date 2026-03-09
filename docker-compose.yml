@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16
+    container_name: wypozyczalnia-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 14102311Mm
+      POSTGRES_DB: wypozyczalnia
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  backend:
+    build: ./backend
+    container_name: wypozyczalnia-backend
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_USER: postgres
+      DB_PASSWORD: 14102311Mm
+      DB_NAME: wypozyczalnia
+    ports:
+      - "3000:3000"
+
+  frontend:
+    build: ./frontend
+    container_name: wypozyczalnia-frontend
+    depends_on:
+      - backend
+    ports:
+      - "5173:5173"
+
+volumes:
+  pgdata:
